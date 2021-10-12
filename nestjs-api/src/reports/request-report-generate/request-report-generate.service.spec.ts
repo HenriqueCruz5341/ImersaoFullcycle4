@@ -9,7 +9,9 @@ describe('RequestReportGenerateService', () => {
       providers: [RequestReportGenerateService],
     }).compile();
 
-    service = module.get<RequestReportGenerateService>(RequestReportGenerateService);
+    service = module.get<RequestReportGenerateService>(
+      RequestReportGenerateService,
+    );
   });
 
   it('should be defined', () => {
