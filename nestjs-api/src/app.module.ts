@@ -27,6 +27,7 @@ import { ReportsModule } from './reports/reports.module';
       synchronize: true,
       sync: {
         alter: true,
+        // force: true,
       },
     }),
     TransactionsModule,

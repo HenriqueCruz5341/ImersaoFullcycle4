@@ -6,13 +6,24 @@ const palette: PaletteOptions = {
   type: 'dark',
   primary: {
     main: red[800],
-    contrastText: '#FFF',
+    contrastText: '#FFFFFF',
   },
   background: {
     default: '#242526',
   },
 };
 
-const theme = createTheme({ palette });
+const theme = createTheme({
+  palette,
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        'html, body, body>div': {
+          height: '100%',
+        },
+      },
+    },
+  },
+});
 
 export default theme;

@@ -36,6 +36,10 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <meta name="theme-color" content={theme.palette.primary.main} />
+          <meta
+            name="viewport"
+            content="initial-scale=1.0, width=device-width"
+          />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"

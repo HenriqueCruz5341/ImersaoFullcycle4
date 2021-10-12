@@ -1,15 +1,17 @@
 import {
-  Box,
   Button,
-  Container,
   Grid,
-  MenuItem,
   TextField,
   Typography,
+  Box,
+  MenuItem,
 } from '@material-ui/core';
+import { useKeycloak } from '@react-keycloak/ssr';
 import { NextPage } from 'next';
-import { useRouter } from 'next/dist/client/router';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
+import { Head } from '../../components/Head';
+import { Page } from '../../components/Page';
 import makeHttp from '../../utils/http';
 import {
   TransactionCategoryLabels,
@@ -19,18 +21,29 @@ import {
 const TransactionsNewPage: NextPage = () => {
   const { register, handleSubmit } = useForm();
   const router = useRouter();
+  const { initialized, keycloak } = useKeycloak();
 
   async function onSubmit(data: any) {
     try {
       await makeHttp().post('transactions', data);
       router.push('/transactions');
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  return (
-    <Container>
+  if (
+    typeof window !== 'undefined' &&
+    initialized &&
+    !keycloak?.authenticated
+  ) {
+    router.replace(`/login?from=${window!.location.pathname}`);
+    return null;
+  }
+
+  return keycloak?.authenticated ? (
+    <Page>
+      <Head title="Nova transação" />
       <Typography component="h1" variant="h4">
         Nova transação
       </Typography>
@@ -43,7 +56,9 @@ const TransactionsNewPage: NextPage = () => {
               required
               label="Data pagamento"
               fullWidth
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             <TextField
               {...register('name')}
@@ -61,33 +76,33 @@ const TransactionsNewPage: NextPage = () => {
             <TextField
               {...register('category')}
               select
-              label="Categoria"
               required
+              label="Categoria"
               fullWidth
             >
-              {TransactionCategoryLabels.map((cat, index) => (
-                <MenuItem key={index} value={cat.value}>
-                  {cat.label}
+              {TransactionCategoryLabels.map((i, key) => (
+                <MenuItem key={key} value={i.value}>
+                  {i.label}
                 </MenuItem>
               ))}
             </TextField>
             <TextField
               {...register('amount', { valueAsNumber: true })}
+              required
               type="number"
               label="Valor"
-              required
               fullWidth
             />
             <TextField
               {...register('type')}
               select
-              label="Tipo de operação"
               required
+              label="Tipo de operação"
               fullWidth
             >
-              {TransactionTypeLabels.map((type, index) => (
-                <MenuItem key={index} value={type.value}>
-                  {type.label}
+              {TransactionTypeLabels.map((i, key) => (
+                <MenuItem key={key} value={i.value}>
+                  {i.label}
                 </MenuItem>
               ))}
             </TextField>
@@ -104,8 +119,8 @@ const TransactionsNewPage: NextPage = () => {
           </Grid>
         </Grid>
       </form>
-    </Container>
-  );
+    </Page>
+  ) : null;
 };
 
 export default TransactionsNewPage;
